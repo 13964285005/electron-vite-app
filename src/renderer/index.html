@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>三维热力管网可视化系统</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cesium.com blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://cesium.com; img-src 'self' data: blob: http://t0.tianditu.gov.cn http://t1.tianditu.gov.cn http://t2.tianditu.gov.cn http://t3.tianditu.gov.cn http://t4.tianditu.gov.cn https://ui-avatars.com https://cesium.com https://webst01.is.autonavi.com https://webst02.is.autonavi.com https://webst03.is.autonavi.com https://webst04.is.autonavi.com; connect-src 'self' https://cesium.com http://t0.tianditu.gov.cn http://t1.tianditu.gov.cn http://t2.tianditu.gov.cn http://t3.tianditu.gov.cn http://t4.tianditu.gov.cn"
+    />
+    <!-- 引入Cesium的CDN版本 -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script>
+      // 设置Cesium Ion默认访问token
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyM2RlNzg3YS0zYzY4LTQ0OGMtOWE2ZS1mOTI3MjhkZGJlMmIiLCJpZCI6MjU2MzE3LCJpYXQiOjE3MzE5ODgwOTl9.KqIIaRAzYqENz7XQ6lPAzgRp357ps9_zv3Ta7OUMKCY';
+      // 配置Cesium基础路径，确保能正确加载Workers等资源
+      window.CESIUM_BASE_URL = 'https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium';
+      // 全局变量，供Vue组件使用
+      window.Cesium = Cesium;
+    </script>
+  </head>
+
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
