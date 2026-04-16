@@ -1,15 +1,15 @@
 <template>
   <div class="account-manage-container">
     <div class="page-header">
-      <h2 class="page-title">账号管理</h2>
+      <h2 class="page-title">账号管理12</h2>
       <div class="page-subtitle">Account Management</div>
     </div>
-    
+
     <div class="content-area">
       <!-- 标签页导航 -->
       <div class="tabs">
-        <button 
-          v-for="tab in tabs" 
+        <button
+          v-for="tab in tabs"
           :key="tab.key"
           class="tab-button"
           :class="{ active: activeTab === tab.key }"
@@ -18,7 +18,7 @@
           {{ tab.label }}
         </button>
       </div>
-      
+
       <!-- 平台管理 -->
       <div v-show="activeTab === 'platform'" class="tab-content">
         <div class="section-header">
@@ -31,7 +31,7 @@
             新增平台
           </button>
         </div>
-        
+
         <div class="platform-table-container">
           <table class="platform-table">
             <thead>
@@ -71,7 +71,7 @@
           </table>
         </div>
       </div>
-      
+
       <!-- 用户管理 -->
       <div v-show="activeTab === 'user'" class="tab-content">
         <div class="section-header">
@@ -84,7 +84,7 @@
             新增用户
           </button>
         </div>
-        
+
         <div class="user-table-container">
           <table class="user-table">
             <thead>
@@ -128,7 +128,7 @@
           </table>
         </div>
       </div>
-      
+
       <!-- 角色管理 -->
       <div v-show="activeTab === 'role'" class="tab-content">
         <div class="section-header">
@@ -141,7 +141,7 @@
             新增角色
           </button>
         </div>
-        
+
         <div class="role-table-container">
           <table class="role-table">
             <thead>
@@ -182,7 +182,7 @@
           </table>
         </div>
       </div>
-      
+
       <!-- 页面管理 -->
       <div v-show="activeTab === 'page'" class="tab-content">
         <div class="section-header">
@@ -195,7 +195,7 @@
             新增页面
           </button>
         </div>
-        
+
         <div class="page-table-container">
           <table class="page-table">
             <thead>
@@ -228,7 +228,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 新增用户模态框 -->
     <div v-if="showAddUserModalVisible" class="modal-overlay" @click="showAddUserModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -277,7 +277,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 编辑用户模态框 -->
     <div v-if="showEditUserModalVisible" class="modal-overlay" @click="showEditUserModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -333,7 +333,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 新增角色模态框 -->
     <div v-if="showAddRoleModalVisible" class="modal-overlay" @click="showAddRoleModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -360,9 +360,9 @@
                   <label :for="`page-${page.id}`">{{ page.name }}</label>
                   <div class="function-permissions">
                     <div v-for="func in page.functions" :key="func.id" class="function-item">
-                      <input 
-                        type="checkbox" 
-                        :id="`func-${page.id}-${func.id}`" 
+                      <input
+                        type="checkbox"
+                        :id="`func-${page.id}-${func.id}`"
                         v-model="addRoleForm.functionPermissions[`${page.id}-${func.id}`]"
                         :disabled="!addRoleForm.pagePermissions[page.id]"
                       />
@@ -380,7 +380,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 编辑角色模态框 -->
     <div v-if="showEditRoleModalVisible" class="modal-overlay" @click="showEditRoleModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -407,9 +407,9 @@
                   <label :for="`edit-page-${page.id}`">{{ page.name }}</label>
                   <div class="function-permissions">
                     <div v-for="func in page.functions" :key="func.id" class="function-item">
-                      <input 
-                        type="checkbox" 
-                        :id="`edit-func-${page.id}-${func.id}`" 
+                      <input
+                        type="checkbox"
+                        :id="`edit-func-${page.id}-${func.id}`"
                         v-model="editRoleForm.functionPermissions[`${page.id}-${func.id}`]"
                         :disabled="!editRoleForm.pagePermissions[page.id]"
                       />
@@ -427,7 +427,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 新增页面模态框 -->
     <div v-if="showAddPageModalVisible" class="modal-overlay" @click="showAddPageModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -480,7 +480,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 编辑页面模态框 -->
     <div v-if="showEditPageModalVisible" class="modal-overlay" @click="showEditPageModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -533,7 +533,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 新增平台模态框 -->
     <div v-if="showAddPlatformModalVisible" class="modal-overlay" @click="showAddPlatformModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -555,9 +555,9 @@
             <div class="form-item full-width">
               <label>到期时间</label>
               <div class="expiry-time-container">
-                <input 
-                  type="datetime-local" 
-                  v-model="addPlatformForm.expiryTime" 
+                <input
+                  type="datetime-local"
+                  v-model="addPlatformForm.expiryTime"
                   :min="minExpiryTime"
                   :disabled="addPlatformForm.isPermanent"
                 />
@@ -595,7 +595,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 编辑平台模态框 -->
     <div v-if="showEditPlatformModalVisible" class="modal-overlay" @click="showEditPlatformModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -635,7 +635,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 续约平台模态框 -->
     <div v-if="showRenewPlatformModalVisible" class="modal-overlay" @click="showRenewPlatformModalVisible = false">
       <div class="modal-content" @click.stop>
@@ -653,9 +653,9 @@
             <div class="form-item full-width">
               <label>到期时间</label>
               <div class="expiry-time-container">
-                <input 
-                  type="datetime-local" 
-                  v-model="renewPlatformForm.expiryTime" 
+                <input
+                  type="datetime-local"
+                  v-model="renewPlatformForm.expiryTime"
                   :min="minExpiryTime"
                   :disabled="renewPlatformForm.isPermanent"
                 />
@@ -680,11 +680,11 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 通知组件 -->
-    <Notification 
-      :visible="notificationVisible" 
-      :message="notificationMessage" 
+    <Notification
+      :visible="notificationVisible"
+      :message="notificationMessage"
       :type="notificationType"
       @close="closeNotification"
     />
@@ -722,12 +722,12 @@ import {
   notificationVisible,
   notificationMessage,
   notificationType,
-  
+
   // 计算属性
   isPlatformAdmin,
   isSuperAdmin,
   visibleUsers,
-  
+
   // 方法
   canOperateUser,
   canToggleUserStatus,
@@ -781,10 +781,10 @@ onMounted(() => {
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
-  
+
   .page-header {
     margin-bottom: 25px;
-    
+
     .page-title {
       font-size: 24px;
       font-weight: 700;
@@ -793,26 +793,26 @@ onMounted(() => {
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    
+
     .page-subtitle {
       font-size: 14px;
       color: rgba(0, 229, 255, 0.6);
       letter-spacing: 1px;
     }
   }
-  
+
   .content-area {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
-  
+
   // 标签页
   .tabs {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    
+
     .tab-button {
       padding: 10px 20px;
       border: 1px solid rgba(0, 229, 255, 0.3);
@@ -823,12 +823,12 @@ onMounted(() => {
       transition: all 0.3s ease;
       font-size: 14px;
       font-weight: 500;
-      
+
       &:hover {
         background: rgba(0, 229, 255, 0.1);
         border-color: #00e5ff;
       }
-      
+
       &.active {
         background: linear-gradient(135deg, #00e5ff 0%, #0080ff 100%);
         color: #0a1929;
@@ -838,7 +838,7 @@ onMounted(() => {
       }
     }
   }
-  
+
   // 标签内容
   .tab-content {
     .section-header {
@@ -846,14 +846,14 @@ onMounted(() => {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      
+
       h3 {
         font-size: 18px;
         font-weight: 600;
         color: #00e5ff;
         margin: 0;
       }
-      
+
       .action-btn {
         display: flex;
         align-items: center;
@@ -866,17 +866,17 @@ onMounted(() => {
         font-size: 14px;
         cursor: pointer;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background: rgba(0, 229, 255, 0.2);
           box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
         }
-        
+
         &.primary {
           background: linear-gradient(135deg, #00e5ff 0%, #0080ff 100%);
           color: #0a1929;
           font-weight: 600;
-          
+
           &:hover {
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
           }
@@ -884,7 +884,7 @@ onMounted(() => {
       }
     }
   }
-  
+
   // 表格容器
   .user-table-container,
   .role-table-container,
@@ -894,48 +894,48 @@ onMounted(() => {
     border: 1px solid rgba(0, 229, 255, 0.2);
     border-radius: 12px;
     padding: 20px;
-    
+
     table {
       width: 100%;
       border-collapse: collapse;
-      
+
       th, td {
         padding: 12px 15px;
         text-align: left;
         border-bottom: 1px solid rgba(0, 229, 255, 0.1);
       }
-      
+
       th {
         font-weight: 600;
         color: #00e5ff;
         background: rgba(0, 229, 255, 0.05);
       }
-      
+
       td {
         color: rgba(255, 255, 255, 0.8);
       }
-      
+
       tbody tr:hover {
         background: rgba(0, 229, 255, 0.05);
       }
-      
+
       .status-badge {
         padding: 4px 12px;
         border-radius: 12px;
         font-size: 12px;
         font-weight: 500;
-        
+
         &.active {
           background: rgba(0, 230, 118, 0.2);
           color: #00e676;
         }
-        
+
         &.inactive {
           background: rgba(120, 144, 156, 0.2);
           color: #78909c;
         }
       }
-      
+
       .table-btn {
         padding: 4px 12px;
         margin-right: 8px;
@@ -950,24 +950,24 @@ onMounted(() => {
         align-items: center;
         gap: 4px;
         white-space: nowrap;
-        
+
         &:hover {
           background: rgba(0, 229, 255, 0.2);
         }
       }
-      
+
       .no-permission {
         color: rgba(0, 229, 255, 0.5);
         font-size: 12px;
         font-style: italic;
       }
-      
+
       td:last-child {
         white-space: nowrap;
       }
     }
   }
-  
+
   // 模态框样式
   .modal-overlay {
     position: fixed;
@@ -981,7 +981,7 @@ onMounted(() => {
     justify-content: center;
     z-index: 1000;
   }
-  
+
   .modal-content {
     background: linear-gradient(135deg, #0a1929 0%, #1e3a5f 100%);
     border: 1px solid rgba(0, 229, 255, 0.3);
@@ -993,21 +993,21 @@ onMounted(() => {
     box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
     display: flex;
     flex-direction: column;
-    
+
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
       flex-shrink: 0;
-      
+
       h3 {
         font-size: 18px;
         font-weight: 600;
         color: #00e5ff;
         margin: 0;
       }
-      
+
       .modal-close {
         background: none;
         border: none;
@@ -1016,39 +1016,39 @@ onMounted(() => {
         padding: 5px;
         border-radius: 4px;
         transition: all 0.3s ease;
-        
+
         &:hover {
           color: #00e5ff;
           background: rgba(0, 229, 255, 0.1);
         }
       }
     }
-    
+
     .modal-body {
       margin-bottom: 20px;
       flex: 1;
       overflow-y: auto;
       max-height: calc(80vh - 140px);
-      
+
       &::-webkit-scrollbar {
         width: 8px;
       }
-      
+
       &::-webkit-scrollbar-track {
         background: rgba(0, 229, 255, 0.05);
         border-radius: 4px;
       }
-      
+
       &::-webkit-scrollbar-thumb {
         background: rgba(0, 229, 255, 0.3);
         border-radius: 4px;
       }
-      
+
       &::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 229, 255, 0.5);
       }
     }
-    
+
     .modal-footer {
       display: flex;
       justify-content: flex-end;
@@ -1056,27 +1056,27 @@ onMounted(() => {
       flex-shrink: 0;
     }
   }
-  
+
   // 表单网格
   .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    
+
     .form-item {
       display: flex;
       flex-direction: column;
-      
+
       &.full-width {
         grid-column: 1 / -1;
       }
-      
+
       label {
         font-size: 14px;
         color: rgba(0, 229, 255, 0.7);
         margin-bottom: 5px;
       }
-      
+
       input,
       select,
       textarea {
@@ -1087,19 +1087,19 @@ onMounted(() => {
         color: rgba(255, 255, 255, 0.9);
         font-size: 14px;
         transition: all 0.3s ease;
-        
+
         &:focus {
           outline: none;
           border-color: #00e5ff;
           box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
         }
-        
+
         &:read-only {
           background: rgba(0, 229, 255, 0.03);
           cursor: not-allowed;
         }
       }
-      
+
       select {
         appearance: none;
         background-image: linear-gradient(45deg, transparent 50%, rgba(0, 229, 255, 0.5) 50%),
@@ -1113,17 +1113,17 @@ onMounted(() => {
         position: relative;
         z-index: 1;
         transition: all 0.3s ease;
-        
+
         &:hover {
           border-color: #00e5ff;
           background-color: rgba(0, 229, 255, 0.08);
         }
-        
+
         &:focus {
           z-index: 2;
           box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
-        
+
         option {
           background: linear-gradient(135deg, #0a1929 0%, #1e3a5f 100%);
           color: rgba(255, 255, 255, 0.9);
@@ -1134,20 +1134,20 @@ onMounted(() => {
           border-radius: 4px;
           margin: 4px 0;
         }
-        
+
         option:hover {
           background: linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 128, 255, 0.15) 100%);
           color: #00e5ff;
           transform: translateX(4px);
         }
-        
+
         option:checked {
           background: linear-gradient(135deg, rgba(0, 229, 255, 0.25) 0%, rgba(0, 128, 255, 0.25) 100%);
           color: #00e5ff;
           font-weight: 600;
           box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
         }
-        
+
         option:disabled {
           background: rgba(0, 229, 255, 0.03);
           color: rgba(0, 229, 255, 0.3);
@@ -1155,44 +1155,44 @@ onMounted(() => {
           opacity: 0.6;
         }
       }
-      
+
       textarea {
         resize: vertical;
       }
-      
+
       .hash-code-container {
         display: flex;
         gap: 10px;
-        
+
         input {
           flex: 1;
         }
-        
+
         .generate-btn {
           padding: 10px 16px;
           white-space: nowrap;
         }
       }
-      
+
       .expiry-time-container {
         display: flex;
         align-items: center;
         gap: 15px;
-        
+
         input {
           flex: 1;
         }
-        
+
         .permanent-checkbox {
           display: flex;
           align-items: center;
           gap: 8px;
-          
+
           label {
             margin-left: 0;
             cursor: pointer;
           }
-          
+
           input[type="checkbox"] {
             cursor: pointer;
             width: 16px;
@@ -1201,7 +1201,7 @@ onMounted(() => {
           }
         }
       }
-      
+
       .admin-info-section {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -1211,14 +1211,14 @@ onMounted(() => {
         background: rgba(0, 229, 255, 0.05);
         border-radius: 8px;
         border: 1px solid rgba(0, 229, 255, 0.2);
-        
+
         .form-item {
           margin-bottom: 0;
         }
       }
     }
   }
-  
+
   // 按钮样式
   .btn {
     padding: 10px 20px;
@@ -1228,29 +1228,29 @@ onMounted(() => {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid transparent;
-    
+
     &.primary {
       background: linear-gradient(135deg, #00e5ff 0%, #0080ff 100%);
       color: #0a1929;
       font-weight: 600;
-      
+
       &:hover {
         box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
       }
     }
-    
+
     &.secondary {
       background: rgba(0, 229, 255, 0.1);
       border: 1px solid rgba(0, 229, 255, 0.3);
       color: #00e5ff;
-      
+
       &:hover {
         background: rgba(0, 229, 255, 0.2);
         box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
       }
     }
   }
-  
+
   // 权限列表
   .permission-list {
     .permission-item {
@@ -1259,46 +1259,46 @@ onMounted(() => {
       border: 1px solid rgba(0, 229, 255, 0.2);
       border-radius: 6px;
       background: rgba(0, 229, 255, 0.05);
-      
+
       label {
         margin-left: 8px;
         font-weight: 500;
         cursor: pointer;
       }
-      
+
       input[type="checkbox"] {
         cursor: pointer;
         width: 16px;
         height: 16px;
         accent-color: #00e5ff;
       }
-      
+
       .function-permissions {
         margin-top: 10px;
         margin-left: 25px;
-        
+
         .function-item {
           margin-bottom: 5px;
-          
+
           label {
             margin-left: 8px;
             font-weight: normal;
             font-size: 13px;
             cursor: pointer;
           }
-          
+
           input:disabled + label {
             color: rgba(0, 229, 255, 0.4);
             cursor: not-allowed;
           }
-          
+
           input[type="checkbox"] {
             cursor: pointer;
             width: 14px;
             height: 14px;
             accent-color: #00e5ff;
           }
-          
+
           input:disabled {
             cursor: not-allowed;
           }
@@ -1306,18 +1306,18 @@ onMounted(() => {
       }
     }
   }
-  
+
   // 功能列表
   .function-list {
     .function-input {
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
-      
+
       input {
         flex: 1;
       }
-      
+
       .remove-btn {
         background: rgba(255, 77, 79, 0.1);
         border: 1px solid rgba(255, 77, 79, 0.3);
@@ -1326,14 +1326,14 @@ onMounted(() => {
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background: rgba(255, 77, 79, 0.2);
           border-color: #ff4d4f;
         }
       }
     }
-    
+
     .add-function-btn {
       display: flex;
       align-items: center;
@@ -1346,7 +1346,7 @@ onMounted(() => {
       font-size: 14px;
       cursor: pointer;
       transition: all 0.3s ease;
-      
+
       &:hover {
         background: rgba(0, 229, 255, 0.05);
         border-color: #00e5ff;
