@@ -1,21 +1,15 @@
-import { ref, computed, onMounted } from 'vue';
-import type { Platform } from '../types';
-import { mockPlatforms } from '../mock';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ElMessage } from 'element-plus';
+import type { Platform, Device } from '../types';
+import { mockPlatforms, mockDevices } from '../mock';
+
+const useDeviceStore = () => {
 
 // 模拟平台数据
 const platforms = ref<Platform[]>([...mockPlatforms]);
 
-// 模拟设备数据（添加platformId字段）
-const deviceList = ref([
-  { code: 'DEV001', name: '热力监测站A01', type: '监测站', area: '市南区', platformId: '1', status: 'online', statusText: '在线', lastOnline: '2024-01-15 14:30:25', description: '主要监测市南区域热力管道压力和温度', location: '市南区中山路123号' },
-  { code: 'DEV002', name: '热力监测站A02', type: '监测站', area: '市南区', platformId: '1', status: 'online', statusText: '在线', lastOnline: '2024-01-15 14:28:18', description: '辅助监测站，负责备份数据', location: '市南区香港路456号' },
-  { code: 'DEV003', name: '管道传感器B01', type: '传感器', area: '市北区', platformId: '1', status: 'warning', statusText: '告警', lastOnline: '2024-01-15 13:45:33', description: '监测管道流量异常', location: '市北区辽宁路789号' },
-  { code: 'DEV004', name: '管道传感器B02', type: '传感器', area: '市北区', platformId: '2', status: 'online', statusText: '在线', lastOnline: '2024-01-15 14:29:45', description: '监测管道压力', location: '市北区人民路321号' },
-  { code: 'DEV005', name: '热力监测站C01', type: '监测站', area: '李沧区', platformId: '2', status: 'offline', statusText: '离线', lastOnline: '2024-01-14 22:15:10', description: '李沧区主监测站', location: '李沧区李村路654号' },
-  { code: 'DEV006', name: '控制阀门D01', type: '控制阀', area: '崂山区', platformId: '3', status: 'online', statusText: '在线', lastOnline: '2024-01-15 14:27:52', description: '控制崂山区域热力流量', location: '崂山区崂山路987号' },
-  { code: 'DEV007', name: '控制阀门D02', type: '控制阀', area: '崂山区', platformId: '3', status: 'online', statusText: '在线', lastOnline: '2024-01-15 14:30:01', description: '备用控制阀门', location: '崂山区沙子口路654号' },
-  { code: 'DEV008', name: '管道传感器E01', type: '传感器', area: '城阳区', platformId: '3', status: 'offline', statusText: '离线', lastOnline: '2024-01-14 18:30:45', description: '监测城阳区域管道温度', location: '城阳区正阳路321号' },
-]);
+// 模拟设备数据
+const deviceList = ref<Device[]>([...mockDevices]);
 
 // 模态框状态
 const showDetailModal = ref(false);
@@ -181,18 +175,22 @@ const resetEditForm = () => {
 const saveDevice = () => {
   const index = deviceList.value.findIndex(device => device.code === editForm.value.code);
   if (index !== -1) {
+    const platform = platforms.value.find(p => p.id === editForm.value.platformId);
     deviceList.value[index] = {
       ...deviceList.value[index],
       name: editForm.value.name,
       type: editForm.value.type,
-      area: editForm.value.area,
       platformId: editForm.value.platformId,
-      description: editForm.value.description,
+      platformName: platform?.name || deviceList.value[index].platformName,
       location: editForm.value.location
     };
   }
   closeEditModal();
-  alert('设备信息已更新');
+  ElMessage({
+    message: '设备信息已更新',
+    type: 'success',
+    duration: 3000
+  });
 };
 
 // 显示新增设备模态框
@@ -226,37 +224,54 @@ const resetAddForm = () => {
 // 添加设备
 const addDevice = () => {
   if (!addForm.value.code || !addForm.value.name) {
-    alert('请填写设备编号和名称');
+    ElMessage({
+      message: '请填写设备编号和名称',
+      type: 'warning',
+      duration: 3000
+    });
     return;
   }
   
-  // 对于超级管理员，自动使用当前平台ID
-  let platformId = addForm.value.platformId;
-  if (!isPlatformAdmin.value && platformInfo.value) {
+  // 自动使用用户所属平台ID
+  let platformId = '';
+  if (platformInfo.value) {
     platformId = platformInfo.value.id;
+  } else if (isPlatformAdmin.value) {
+    // 平台管理员默认使用第一个平台（或其他逻辑）
+    if (platforms.value.length > 0) {
+      platformId = platforms.value[0].id;
+    }
   }
   
+  // 如果仍无法获取平台ID，使用默认值
   if (!platformId) {
-    alert('请选择设备所属平台');
-    return;
+    platformId = '1'; // 使用默认平台ID
   }
+  
+  const platform = platforms.value.find(p => p.id === platformId);
   
   const newDevice = {
+    id: String(deviceList.value.length + 1),
     code: addForm.value.code,
     name: addForm.value.name,
     type: addForm.value.type,
-    area: addForm.value.area,
     platformId: platformId,
+    platformName: platform?.name || '平台1',
     status: 'offline',
     statusText: '离线',
-    lastOnline: '暂无',
-    description: addForm.value.description,
-    location: addForm.value.location
+    location: addForm.value.location,
+    ip: '',
+    mac: '',
+    createdAt: new Date().toISOString()
   };
   
   deviceList.value.push(newDevice);
   closeAddModal();
-  alert('设备已添加');
+  ElMessage({
+    message: '设备已添加',
+    type: 'success',
+    duration: 3000
+  });
 };
 
 // 显示统计详情
@@ -305,15 +320,49 @@ const initDeviceData = () => {
     } catch (error) {
       console.error('解析平台信息失败:', error);
     }
+  } else {
+    // 如果没有平台信息，尝试从userRole和platformId获取
+    const userRole = localStorage.getItem('userRole');
+    const platformId = localStorage.getItem('platformId');
+    
+    if (userRole === 'admin' && platformId) {
+      // 超级管理员，获取平台信息
+      const platform = platforms.value.find(p => p.id === platformId);
+      if (platform) {
+        platformInfo.value = platform;
+      }
+    }
   }
 };
 
 // 初始化数据
 onMounted(() => {
   initDeviceData();
+  
+  // 监听localStorage变化，当用户角色或平台信息变化时重新初始化数据
+  window.addEventListener('storage', handleStorageChange);
 });
 
-export {
+// 处理storage变化
+const handleStorageChange = (event: StorageEvent) => {
+  if (event.key === 'userRole' || event.key === 'platformId' || event.key === 'platformInfo') {
+    initDeviceData();
+  }
+};
+
+// 组件卸载时移除监听器
+onUnmounted(() => {
+  window.removeEventListener('storage', handleStorageChange);
+});
+
+// 加载设备数据
+const loadDevices = () => {
+  // 实际应用中应该从 API 获取数据
+  deviceList.value = [...mockDevices];
+  initDeviceData();
+};
+
+return {
   // 状态
   platforms,
   deviceList,
@@ -356,5 +405,9 @@ export {
   addDevice,
   showStatsDetail,
   closeStatsModal,
-  initDeviceData
+  initDeviceData,
+  loadDevices
 };
+};
+
+export default useDeviceStore;

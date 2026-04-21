@@ -1,0 +1,454 @@
+// 导入变量和混合
+@import './variables.less';
+@import './mixins.less';
+
+// 基础容器
+.container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+// 页面容器
+.page-container {
+  width: 100%;
+  height: 100%;
+  padding: @spacing-xxl;
+  box-sizing: border-box;
+  background: @bg-primary;
+  overflow: hidden;
+}
+
+// 内容区域
+.content-area {
+  margin-top: @spacing-xxl;
+  flex: 1;
+  min-height: 0;
+}
+
+// 页面头部
+.page-header {
+  .flex(row, space-between, center);
+  margin-bottom: @spacing-xxxl;
+  
+  .page-title {
+    font-size: @font-size-xxxl;
+    font-weight: @font-weight-bold;
+    color: @text-primary;
+    margin: 0 0 @spacing-xs 0;
+  }
+  
+  .page-subtitle {
+    font-size: @font-size-sm;
+    color: @text-tertiary;
+    margin: 0;
+  }
+}
+
+// 标签页
+.tabs {
+  display: flex;
+  gap: @spacing-sm;
+  margin-bottom: @spacing-xxl;
+  
+  .tab-button {
+    .button-base(@bg-tertiary, @text-secondary, @border-color);
+    padding: @spacing-sm @spacing-lg;
+    
+    &.active {
+      .gradient-bg();
+      color: @bg-primary;
+      border-color: @primary-color;
+    }
+  }
+}
+
+// 区块头部
+.section-header {
+  .flex(row, space-between, center);
+  margin-bottom: @spacing-xl;
+  
+  h3 {
+    font-size: @font-size-xl;
+    font-weight: @font-weight-semibold;
+    color: @text-primary;
+    margin: 0;
+  }
+}
+
+// 操作按钮
+.action-btn {
+  .button-base();
+  display: flex;
+  align-items: center;
+  gap: @spacing-sm;
+  
+  &.primary {
+    .gradient-bg();
+    color: @bg-primary;
+    border-color: @primary-color;
+  }
+  
+  &.secondary {
+    .button-base(@bg-tertiary, @text-secondary, @border-color);
+  }
+  
+  &.danger {
+    .button-base(rgba(255, 77, 79, 0.1), @warning-color, rgba(255, 77, 79, 0.3));
+  }
+}
+
+// 表格容器
+.table-container {
+  margin-top: @spacing-lg;
+  
+  .table-wrapper {
+    border: 1px solid @border-color;
+    border-radius: @border-radius-md;
+    overflow: hidden;
+  }
+  
+  .table-header {
+    .flex(row, space-between, center);
+    margin-bottom: @spacing-lg;
+    
+    .header-left {
+      .flex(row, flex-start, center);
+      gap: @spacing-lg;
+      
+      h3 {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @text-primary;
+        margin: 0;
+      }
+    }
+    
+    .table-actions {
+      .flex(row, flex-end, center);
+      gap: @spacing-sm;
+    }
+  }
+  
+  .table-body {
+    max-height: 400px;
+    overflow-y: auto;
+    .scrollbar();
+  }
+}
+
+// 表格按钮
+.table-btn {
+  .button-base(@bg-tertiary, @text-secondary, @border-color);
+  padding: @spacing-xs @spacing-sm;
+  font-size: @font-size-sm;
+  margin-right: @spacing-xs;
+  
+  &:last-child {
+    margin-right: 0;
+  }
+  
+  &:hover {
+    border-color: @primary-color;
+    color: @primary-color;
+  }
+}
+
+// 状态徽章
+.status-badge {
+  display: inline-block;
+  padding: @spacing-xs @spacing-sm;
+  border-radius: @border-radius-full;
+  font-size: @font-size-xs;
+  font-weight: @font-weight-medium;
+  
+  &.active {
+    background: @success-color;
+    color: #0a1929;
+  }
+  
+  &.inactive {
+    background: @text-tertiary;
+    color: #0a1929;
+  }
+  
+  &.online {
+    background: @success-color;
+    color: #0a1929;
+  }
+  
+  &.offline {
+    background: @text-tertiary;
+    color: #0a1929;
+  }
+  
+  &.warning {
+    background: @warning-color;
+    color: #0a1929;
+  }
+}
+
+// 统计卡片
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: @spacing-lg;
+  margin-bottom: @spacing-xxl;
+  
+  .stat-card {
+    .card();
+    .flex(row, space-between, center);
+    cursor: pointer;
+    transition: all @transition-normal;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: @shadow-md;
+    }
+    
+    .stat-icon {
+      font-size: @font-size-xxl;
+      color: @primary-color;
+      margin-right: @spacing-lg;
+    }
+    
+    .stat-info {
+      flex: 1;
+      
+      .stat-value {
+        font-size: @font-size-xxl;
+        font-weight: @font-weight-bold;
+        color: @text-primary;
+        line-height: 1;
+      }
+      
+      .stat-label {
+        font-size: @font-size-sm;
+        color: @text-tertiary;
+        margin-top: @spacing-xs;
+      }
+    }
+    
+    .stat-action {
+      font-size: @font-size-sm;
+      color: @text-tertiary;
+    }
+    
+    &.online .stat-icon {
+      color: @success-color;
+    }
+    
+    &.offline .stat-icon {
+      color: @text-tertiary;
+    }
+    
+    &.warning .stat-icon {
+      color: @warning-color;
+    }
+  }
+}
+
+// 表单样式
+.form-group {
+  margin-bottom: @spacing-lg;
+  
+  label {
+    display: block;
+    font-size: @font-size-sm;
+    font-weight: @font-weight-medium;
+    color: @text-secondary;
+    margin-bottom: @spacing-sm;
+  }
+  
+  input,
+  select,
+  textarea {
+    .input-base();
+    width: 100%;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+// 表单行
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: @spacing-lg;
+  margin-bottom: @spacing-lg;
+}
+
+// 模态框
+.modal-overlay {
+  .fixed(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0.5);
+  .center();
+  z-index: @z-index-modal;
+  
+  .modal-content {
+    .modal-base();
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    
+    .modal-header {
+      .flex(row, space-between, center);
+      padding: @spacing-lg @spacing-xl;
+      border-bottom: 1px solid @border-light;
+      
+      h4 {
+        font-size: @font-size-lg;
+        font-weight: @font-weight-semibold;
+        color: @primary-color;
+        margin: 0;
+      }
+      
+      .close-btn {
+        background: none;
+        border: none;
+        color: @text-tertiary;
+        font-size: @font-size-xl;
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        .center();
+        
+        &:hover {
+          color: @primary-color;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: @spacing-xl;
+      max-height: 60vh;
+      overflow-y: auto;
+      .scrollbar();
+    }
+    
+    .modal-footer {
+      .flex(row, flex-end, center);
+      gap: @spacing-sm;
+      padding: @spacing-lg @spacing-xl;
+      border-top: 1px solid @border-light;
+      background: @bg-secondary;
+    }
+  }
+}
+
+// 通知组件
+.notification {
+  position: fixed;
+  top: @spacing-xl;
+  right: @spacing-xl;
+  z-index: @z-index-tooltip;
+  .card(@spacing-lg);
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: @shadow-lg;
+  transform: translateX(100%);
+  transition: transform @transition-normal;
+  
+  &.visible {
+    transform: translateX(0);
+  }
+  
+  .notification-content {
+    .flex(row, flex-start, flex-start);
+    gap: @spacing-md;
+    
+    .notification-icon {
+      font-size: @font-size-lg;
+      flex-shrink: 0;
+    }
+    
+    .notification-text {
+      flex: 1;
+      font-size: @font-size-base;
+      color: @text-primary;
+      line-height: 1.4;
+    }
+  }
+  
+  &.success .notification-icon {
+    color: @success-color;
+  }
+  
+  &.error .notification-icon {
+    color: @error-color;
+  }
+  
+  &.warning .notification-icon {
+    color: @warning-color;
+  }
+  
+  &.info .notification-icon {
+    color: @info-color;
+  }
+}
+
+// 加载状态
+.loading {
+  .center();
+  width: 100%;
+  height: 200px;
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid @border-light;
+    border-top: 3px solid @primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+// 空状态
+.empty-state {
+  .center();
+  flex-direction: column;
+  gap: @spacing-lg;
+  padding: @spacing-xxxl;
+  
+  .empty-icon {
+    font-size: @font-size-xxxl;
+    color: @text-tertiary;
+  }
+  
+  .empty-text {
+    font-size: @font-size-base;
+    color: @text-tertiary;
+    text-align: center;
+  }
+}
+
+// 响应式设计
+@media (max-width: @breakpoint-md) {
+  .page-container {
+    padding: @spacing-lg;
+  }
+  
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    .table-body {
+      max-height: 300px;
+    }
+  }
+}

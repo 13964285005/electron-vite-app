@@ -32,13 +32,37 @@
           </svg>
         </div>
         <input 
-          type="password" 
+          :type="showPassword ? 'text' : 'password'" 
           v-model="password" 
           placeholder="请输入密码" 
           class="input-field"
           :class="{ 'input-error': errors.password }"
         >
+        <div class="input-toggle" @click="showPassword = !showPassword">
+          <svg v-if="showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+            <line x1="2" y1="2" x2="22" y2="22"></line>
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
         <div v-if="errors.password" class="error-message">{{ errors.password }}</div>
+      </div>
+      
+      <!-- 记住密码 -->
+      <div class="remember-container">
+        <label class="remember-label">
+          <input 
+            type="checkbox" 
+            v-model="rememberPassword" 
+            class="remember-checkbox"
+          >
+          <span class="remember-text">记住密码</span>
+        </label>
       </div>
       
       <!-- 登录错误提示 -->
@@ -46,7 +70,7 @@
       
       <!-- 登录按钮 -->
       <button 
-        @click="handleLogin" 
+        @click="handleLogin(rememberPassword)" 
         class="login-button"
       >
         登录
@@ -56,7 +80,16 @@
 </template>
 
 <script setup lang="ts">
-import { username, password, errors, handleLogin } from '../stores/authStore'
+import { ref, onMounted } from 'vue'
+import { username, password, errors, handleLogin, loadSavedCredentials } from '../stores/authStore'
+
+const showPassword = ref(false)
+const rememberPassword = ref(false)
+
+// 加载保存的凭证
+onMounted(() => {
+  loadSavedCredentials()
+})
 </script>
 
 <style scoped lang="less">
@@ -171,9 +204,28 @@ import { username, password, errors, handleLogin } from '../stores/authStore'
     justify-content: center;
   }
   
+  .input-toggle {
+    position: absolute;
+    right: 15px;
+    top: 14px;
+    color: #00e5ff;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(0, 229, 255, 0.1);
+    }
+  }
+  
   .input-field {
     width: 100%;
-    padding: 14px 15px 14px 45px;
+    padding: 14px 45px 14px 45px;
     border: 1px solid rgba(0, 229, 255, 0.3);
     border-radius: 8px;
     font-size: 14px;
@@ -245,6 +297,30 @@ import { username, password, errors, handleLogin } from '../stores/authStore'
 .input-error {
   border-color: #ff4d4f !important;
   box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.2) !important;
+}
+
+.remember-container {
+  margin: 15px 0;
+  position: relative;
+  z-index: 1;
+  
+  .remember-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    
+    .remember-checkbox {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      accent-color: #00e5ff;
+    }
+    
+    .remember-text {
+      color: rgba(0, 229, 255, 0.8);
+      font-size: 14px;
+    }
+  }
 }
 
 .login-error {

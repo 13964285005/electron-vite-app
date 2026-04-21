@@ -7,6 +7,7 @@ export interface Platform {
   createdAt: string;
   expiryTime: string;
   hashCode: string;
+  systemName?: string;
 }
 
 // 用户类型
@@ -43,6 +44,22 @@ export interface Page {
   name: string;
   path: string;
   functions: PageFunction[];
+}
+
+// 设备类型
+export interface Device {
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  platformId: string;
+  platformName: string;
+  status: string;
+  statusText: string;
+  location: string;
+  ip: string;
+  mac: string;
+  createdAt: string;
 }
 
 // 新增用户表单类型
@@ -92,17 +109,18 @@ export interface EditPageForm {
   functions: { name: string; code: string }[];
 }
 
-// 新增平台表单类型
+// 添加平台表单
 export interface AddPlatformForm {
   name: string;
   expiryTime: string;
   hashCode: string;
   adminUsername: string;
   adminPassword: string;
+  systemName: string;
   isPermanent: boolean;
 }
 
-// 编辑平台表单类型
+// 编辑平台表单
 export interface EditPlatformForm {
   id: string;
   name: string;
@@ -110,6 +128,7 @@ export interface EditPlatformForm {
   hashCode: string;
   adminUsername: string;
   adminPassword: string;
+  systemName: string;
 }
 
 // 续约平台表单类型
@@ -124,4 +143,35 @@ export interface RenewPlatformForm {
 export interface Tab {
   key: string;
   label: string;
+}
+
+// 传感器类型
+export interface Sensor {
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  platformId: string;
+  platformName: string;
+  location: string;
+  status: 'online' | 'offline' | 'warning';
+  statusText: string;
+}
+
+// 传感器实时数据
+export interface SensorData {
+  timestamp: number;
+  pressure: number;
+  temperature: number;
+  flow: number;
+  flowVelocity: number;
+}
+
+// 传感器历史数据点
+export interface SensorDataPoint {
+  time: string;
+  pressure: number;
+  temperature: number;
+  flow: number;
+  flowVelocity: number;
 }

@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { Platform, User, Role, Page, Tab, AddUserForm, EditUserForm, AddRoleForm, EditRoleForm, AddPageForm, EditPageForm, AddPlatformForm, EditPlatformForm, RenewPlatformForm } from '../types';
 import { mockPlatforms, mockUsers, mockRoles, mockPages } from '../mock';
 import { getDefaultExpiryTime, formatExpiryTime } from '../utils';
@@ -82,6 +82,7 @@ const addPlatformForm = ref<AddPlatformForm>({
   hashCode: '',
   adminUsername: '',
   adminPassword: '',
+  systemName: '三维热力管网可视化系统',
   isPermanent: false
 });
 
@@ -91,7 +92,8 @@ const editPlatformForm = ref<EditPlatformForm>({
   expiryTime: '',
   hashCode: '',
   adminUsername: '',
-  adminPassword: ''
+  adminPassword: '',
+  systemName: '三维热力管网可视化系统'
 });
 
 const renewPlatformForm = ref<RenewPlatformForm>({
@@ -99,6 +101,14 @@ const renewPlatformForm = ref<RenewPlatformForm>({
   expiryTime: getDefaultExpiryTime(),
   hashCode: '',
   isPermanent: false
+});
+
+// 更改密码表单
+const showChangePasswordModalVisible = ref(false);
+const changePasswordForm = ref({
+  username: '',
+  newPassword: '',
+  confirmPassword: ''
 });
 
 // 通知组件状态
@@ -124,8 +134,52 @@ const visibleUsers = computed(() => {
   return [];
 });
 
+const visiblePages = computed(() => {
+  if (isPlatformAdmin.value) {
+    // 平台管理员可以看到所有页面
+    return pages.value;
+  } else if (isSuperAdmin.value) {
+    // 超级管理员可以看到所有页面（实际应用中可能需要根据权限控制）
+    return pages.value;
+  } else {
+    // 普通用户只能看到有权限的页面
+    return pages.value.filter(page => {
+      return currentUserPermissions.value.includes(page.id);
+    });
+  }
+});
+
 // 检查是否可以操作指定用户
 const canOperateUser = (user: User): boolean => {
+  // 用户不能操作自己
+  const currentUsername = localStorage.getItem('username');
+  if (user.username === currentUsername) {
+    return false;
+  }
+  
+  // 权限级别：platform > admin > user
+  const roleLevel = {
+    platform: 3,
+    admin: 2,
+    user: 1
+  };
+  
+  // 获取当前用户角色级别
+  const currentRole = currentUserRole.value;
+  const currentLevel = roleLevel[currentRole as keyof typeof roleLevel] || 0;
+  
+  // 获取目标用户角色级别
+  let targetRole = user.roleName;
+  if (targetRole === '平台管理员') targetRole = 'platform';
+  else if (targetRole === '超级管理员') targetRole = 'admin';
+  else targetRole = 'user';
+  const targetLevel = roleLevel[targetRole as keyof typeof roleLevel] || 0;
+  
+  // 只能操作权限级别低于自己的用户
+  if (currentLevel <= targetLevel) {
+    return false;
+  }
+  
   if (isPlatformAdmin.value) {
     return true;
   } else if (isSuperAdmin.value) {
@@ -136,6 +190,12 @@ const canOperateUser = (user: User): boolean => {
 
 // 检查是否可以启用/禁用指定用户
 const canToggleUserStatus = (user: User): boolean => {
+  // 用户不能操作自己
+  const currentUsername = localStorage.getItem('username');
+  if (user.username === currentUsername) {
+    return false;
+  }
+  
   return canOperateUser(user);
 };
 
@@ -173,6 +233,26 @@ const initCurrentUserInfo = () => {
     activeTab.value = 'user';
   }
 };
+
+// 处理storage变化
+const handleStorageChange = (event: StorageEvent) => {
+  if (event.key === 'userRole' || event.key === 'platformId' || event.key === 'userPermissions') {
+    initCurrentUserInfo();
+  }
+};
+
+// 初始化数据
+onMounted(() => {
+  initCurrentUserInfo();
+  
+  // 监听localStorage变化，当用户角色或平台信息变化时重新初始化数据
+  window.addEventListener('storage', handleStorageChange);
+});
+
+// 组件卸载时移除监听器
+onUnmounted(() => {
+  window.removeEventListener('storage', handleStorageChange);
+});
 
 // 显示通知
 const showNotification = (message: string, type: string = 'info') => {
@@ -216,8 +296,23 @@ const showEditUserModal = (user: User) => {
 
 // 新增用户
 const addUser = () => {
-  if (!addUserForm.value.username || !addUserForm.value.password || !addUserForm.value.roleId || !addUserForm.value.platformId) {
-    showNotification('请填写完整信息', 'error');
+  if (!addUserForm.value.username) {
+    showNotification('请输入用户名', 'error');
+    return;
+  }
+  
+  if (!addUserForm.value.password) {
+    showNotification('请输入密码', 'error');
+    return;
+  }
+  
+  if (addUserForm.value.password.length < 6) {
+    showNotification('密码长度不能少于6位', 'error');
+    return;
+  }
+  
+  if (!addUserForm.value.roleId) {
+    showNotification('请选择角色', 'error');
     return;
   }
   
@@ -227,24 +322,26 @@ const addUser = () => {
     return;
   }
   
-  // 检查平台是否存在
-  const platform = platforms.value.find(p => p.id === addUserForm.value.platformId);
-  if (!platform) {
-    showNotification('平台不存在', 'error');
-    return;
+  // 自动使用创建者所属的平台 ID
+  let platformId = currentPlatformId.value;
+  if (isPlatformAdmin.value && !platformId) {
+    // 平台管理员默认使用第一个平台
+    if (platforms.value.length > 0) {
+      platformId = platforms.value[0].id;
+    }
   }
   
-  // 检查权限：超级管理员只能为自己所在的平台创建用户
-  if (isSuperAdmin.value && addUserForm.value.platformId !== currentPlatformId.value) {
-    showNotification('无权限为其他平台创建用户', 'error');
+  if (!platformId) {
+    showNotification('无法获取所属平台信息', 'error');
     return;
   }
   
   users.value.push({
     username: addUserForm.value.username,
+    password: addUserForm.value.password,
     roleId: addUserForm.value.roleId,
     roleName: role.name,
-    platformId: addUserForm.value.platformId,
+    platformId: platformId,
     status: 'active',
     statusText: '启用',
     createdAt: new Date().toLocaleString('zh-CN')
@@ -638,7 +735,8 @@ const showEditPlatformModal = (platform: Platform) => {
     expiryTime: platform.expiryTime === '9999-12-31T23:59:59.999Z' ? formatExpiryTime(platform.expiryTime) : formatExpiryTime(platform.expiryTime),
     hashCode: platform.hashCode,
     adminUsername: adminUser?.username || '',
-    adminPassword: ''
+    adminPassword: '',
+    systemName: platform.systemName || '三维热力管网可视化系统'
   };
   showEditPlatformModalVisible.value = true;
 };
@@ -745,7 +843,8 @@ const addPlatform = () => {
     statusText: '启用',
     createdAt: new Date().toLocaleString('zh-CN'),
     expiryTime: expiryTime,
-    hashCode: addPlatformForm.value.hashCode
+    hashCode: addPlatformForm.value.hashCode,
+    systemName: addPlatformForm.value.systemName
   });
   
   // 创建初始超级管理员
@@ -792,7 +891,8 @@ const updatePlatform = () => {
       ...platforms.value[index],
       name: editPlatformForm.value.name,
       expiryTime: new Date(editPlatformForm.value.expiryTime).toISOString(),
-      hashCode: editPlatformForm.value.hashCode
+      hashCode: editPlatformForm.value.hashCode,
+      systemName: editPlatformForm.value.systemName
     };
     
     // 更新初始超级管理员信息
@@ -824,7 +924,62 @@ const togglePlatformStatus = (platform: Platform) => {
       status: newStatus,
       statusText: newStatus === 'active' ? '启用' : '禁用'
     };
-    showNotification(`平台已${newStatus === 'active' ? '启用' : '禁用'}`, 'success');
+    const message = `平台已${newStatus === 'active' ? '启用' : '禁用'}`;
+    const type = newStatus === 'active' ? 'success' : 'warning';
+    showNotification(message, type);
+  }
+};
+
+// 显示更改密码模态框
+const showChangePasswordModal = (user: User) => {
+  changePasswordForm.value = {
+    username: user.username,
+    newPassword: '',
+    confirmPassword: ''
+  };
+  showChangePasswordModalVisible.value = true;
+};
+
+// 更改密码
+const changePassword = () => {
+  // 验证是否是修改自己的密码
+  const currentUsername = localStorage.getItem('username');
+  if (changePasswordForm.value.username !== currentUsername) {
+    showNotification('只能修改自己账号的密码', 'error');
+    return;
+  }
+  
+  if (!changePasswordForm.value.newPassword) {
+    showNotification('请输入新密码', 'error');
+    return;
+  }
+  
+  if (changePasswordForm.value.newPassword.length < 6) {
+    showNotification('密码长度不能少于6位', 'error');
+    return;
+  }
+  
+  if (!changePasswordForm.value.confirmPassword) {
+    showNotification('请输入确认密码', 'error');
+    return;
+  }
+  
+  if (changePasswordForm.value.newPassword !== changePasswordForm.value.confirmPassword) {
+    showNotification('两次输入的密码不一致', 'error');
+    return;
+  }
+  
+  const index = users.value.findIndex(u => u.username === changePasswordForm.value.username);
+  if (index !== -1) {
+    // 这里应该调用 API 更新密码，现在只是模拟
+    users.value[index] = {
+      ...users.value[index],
+      password: changePasswordForm.value.newPassword // 实际应用中应该加密
+    };
+    showChangePasswordModalVisible.value = false;
+    showNotification('密码已更改', 'success');
+  } else {
+    showNotification('用户不存在', 'error');
   }
 };
 
@@ -896,6 +1051,8 @@ export {
   addPlatformForm,
   editPlatformForm,
   renewPlatformForm,
+  showChangePasswordModalVisible,
+  changePasswordForm,
   notificationVisible,
   notificationMessage,
   notificationType,
@@ -904,6 +1061,7 @@ export {
   isPlatformAdmin,
   isSuperAdmin,
   visibleUsers,
+  visiblePages,
   
   // 方法
   canOperateUser,
@@ -940,5 +1098,7 @@ export {
   updatePlatform,
   renewPlatform,
   togglePlatformStatus,
+  showChangePasswordModal,
+  changePassword,
   getPlatformAdmin
 };

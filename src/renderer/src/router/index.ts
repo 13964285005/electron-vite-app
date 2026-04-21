@@ -34,6 +34,22 @@ const routes: RouteRecordRaw[] = [
       requiresAuth: true
     }
   },
+  {
+    path: '/warning',
+    name: 'Warning',
+    component: () => import('../views/WarningManage.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/repair',
+    name: 'Repair',
+    component: () => import('../views/RepairRecord.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
   // 重定向到登录页面
   {
     path: '/:pathMatch(.*)*',

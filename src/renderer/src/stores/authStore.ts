@@ -1,6 +1,5 @@
 import { ref, reactive } from 'vue';
 import type { Platform } from '../types';
-import router from '../router/index';
 
 // 表单数据
 const username = ref('');
@@ -50,14 +49,14 @@ const mockUsers = {
     username: 'platform',
     password: 'platform123',
     role: 'platform', // 平台管理员
-    permissions: ['platform:manage', 'platform:view', 'device:view', 'account:view', 'account:edit']
+    permissions: ['platform:manage', 'platform:view', 'device:view', 'account:view', 'account:edit', 'repair:view', 'warning:view']
   },
   'admin': {
     username: 'admin',
     password: 'admin123',
     role: 'admin', // 超级管理员
     platformId: '1', // 所属平台
-    permissions: ['device:view', 'account:view', 'account:edit', 'role:manage']
+    permissions: ['device:view', 'account:view', 'account:edit', 'role:manage', 'repair:view', 'warning:view']
   },
   'user': {
     username: 'user',
@@ -93,7 +92,7 @@ const validateForm = () => {
 };
 
 // 处理登录
-const handleLogin = () => {
+const handleLogin = (rememberPassword: boolean = false) => {
   // 验证表单
   if (!validateForm()) {
     return;
@@ -126,6 +125,10 @@ const handleLogin = () => {
       
       // 存储平台信息
       localStorage.setItem('platformInfo', JSON.stringify(platform));
+      // 存储系统名称
+      if (platform.systemName) {
+        localStorage.setItem('systemName', platform.systemName);
+      }
     }
     
     // 登录成功，设置登录状态
@@ -136,11 +139,32 @@ const handleLogin = () => {
     if ('platformId' in user && user.platformId) {
       localStorage.setItem('platformId', user.platformId);
     }
+    
+    // 记住密码
+    if (rememberPassword) {
+      localStorage.setItem('rememberedUsername', username.value);
+      localStorage.setItem('rememberedPassword', password.value);
+    } else {
+      localStorage.removeItem('rememberedUsername');
+      localStorage.removeItem('rememberedPassword');
+    }
+    
     // 跳转到首页
-    router.push('/');
+    window.location.href = '/';
   } else {
     // 登录失败
     errors.login = '用户名或密码错误';
+  }
+};
+
+// 加载保存的凭证
+const loadSavedCredentials = () => {
+  const savedUsername = localStorage.getItem('rememberedUsername');
+  const savedPassword = localStorage.getItem('rememberedPassword');
+  
+  if (savedUsername && savedPassword) {
+    username.value = savedUsername;
+    password.value = savedPassword;
   }
 };
 
@@ -155,7 +179,7 @@ const handleLogout = () => {
   localStorage.removeItem('platformInfo');
   
   // 跳转到登录页
-  router.push('/login');
+  window.location.href = '/login';
 };
 
 export {
@@ -169,5 +193,6 @@ export {
   // 方法
   validateForm,
   handleLogin,
-  handleLogout
+  handleLogout,
+  loadSavedCredentials
 };

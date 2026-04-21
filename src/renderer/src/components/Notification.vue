@@ -60,39 +60,41 @@ const close = () => {
 <style scoped lang="less">
 .notification-container {
   position: fixed;
-  top: 20px;
+  top: 90px;
   right: 20px;
-  z-index: 1000;
+  z-index: 999999;
   animation: slideIn 0.3s ease;
+  pointer-events: auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   
   &.success {
     .notification-content {
-      background: rgba(0, 230, 118, 0.1);
-      border: 1px solid rgba(0, 230, 118, 0.3);
+      background: rgba(0, 230, 118, 0.25);
+      border: 1px solid rgba(0, 230, 118, 0.5);
       color: #00e676;
     }
   }
   
   &.error {
     .notification-content {
-      background: rgba(255, 77, 79, 0.1);
-      border: 1px solid rgba(255, 77, 79, 0.3);
+      background: rgba(255, 77, 79, 0.25);
+      border: 1px solid rgba(255, 77, 79, 0.5);
       color: #ff4d4f;
     }
   }
   
   &.warning {
     .notification-content {
-      background: rgba(255, 177, 0, 0.1);
-      border: 1px solid rgba(255, 177, 0, 0.3);
+      background: rgba(255, 177, 0, 0.25);
+      border: 1px solid rgba(255, 177, 0, 0.5);
       color: #ffb100;
     }
   }
   
   &.info {
     .notification-content {
-      background: rgba(0, 229, 255, 0.1);
-      border: 1px solid rgba(0, 229, 255, 0.3);
+      background: rgba(0, 229, 255, 0.25);
+      border: 1px solid rgba(0, 229, 255, 0.5);
       color: #00e5ff;
     }
   }

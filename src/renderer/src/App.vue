@@ -116,6 +116,39 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="less">
+// 全局表格滚动条样式
+.table-container,
+.el-table__body-wrapper,
+.el-table__body,
+.el-table-body,
+.table-body {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 229, 255, 0.05);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 229, 255, 0.3);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 229, 255, 0.5);
+    }
+  }
+}
+
+// 表格容器 - 只在内容区域显示滚动条
+.table-container {
+  overflow: auto;
+  max-height: calc(100vh - 280px);
+  min-height: 200px;
+}
+
 .app-container {
   width: 100vw;
   height: 100vh;
