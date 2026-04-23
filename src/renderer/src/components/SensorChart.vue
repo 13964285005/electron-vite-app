@@ -74,30 +74,30 @@
         <span class="info-value" :class="selectedSensor.status">{{ selectedSensor.status === 'online' ? '在线' : selectedSensor.status === 'warning' ? '告警' : '离线' }}</span>
       </div>
     </div>
-
-    <!-- 选择传感器模态框 -->
-    <div v-if="showModal" class="modal-overlay" @click="showModal = false">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h4>选择传感器</h4>
-          <button class="close-btn" @click="showModal = false">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="sensor-list">
-            <button
-              v-for="sensor in sensors"
-              :key="sensor.id"
-              class="sensor-item"
-              :class="{ active: selectedSensorId === sensor.id, [sensor.status]: true }"
-              @click="selectSensor(sensor.id); showModal = false"
-            >
-              <div class="sensor-item-code">{{ sensor.code }}</div>
-              <div class="sensor-item-name">{{ sensor.name }}</div>
-              <div class="sensor-item-status" :class="sensor.status">
-                {{ sensor.status === 'online' ? '在线' : sensor.status === 'warning' ? '告警' : '离线' }}
-              </div>
-            </button>
-          </div>
+  </div>
+  
+  <!-- 选择传感器模态框 - 移到组件外部 -->
+  <div v-if="showModal" class="modal-overlay" @click="showModal = false">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h4>选择传感器</h4>
+        <button class="close-btn" @click="showModal = false">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="sensor-list">
+          <button
+            v-for="sensor in sensors"
+            :key="sensor.id"
+            class="sensor-item"
+            :class="{ active: selectedSensorId === sensor.id, [sensor.status]: true }"
+            @click="selectSensor(sensor.id); showModal = false"
+          >
+            <div class="sensor-item-code">{{ sensor.code }}</div>
+            <div class="sensor-item-name">{{ sensor.name }}</div>
+            <div class="sensor-item-status" :class="sensor.status">
+              {{ sensor.status === 'online' ? '在线' : sensor.status === 'warning' ? '告警' : '离线' }}
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -519,146 +519,6 @@ onUnmounted(() => {
     }
   }
 
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    pointer-events: auto;
-
-    .modal-content {
-      background: rgba(10, 25, 41, 0.95);
-      border: 1px solid rgba(0, 229, 255, 0.3);
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      max-height: 80vh;
-      overflow: hidden;
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(0, 229, 255, 0.2);
-
-        h4 {
-          font-size: 14px;
-          font-weight: 600;
-          color: #00e5ff;
-          margin: 0;
-        }
-
-        .close-btn {
-          background: none;
-          border: none;
-          color: rgba(0, 229, 255, 0.6);
-          font-size: 20px;
-          cursor: pointer;
-          padding: 0;
-          width: 20px;
-          height: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &:hover {
-            color: #00e5ff;
-          }
-        }
-      }
-
-      .modal-body {
-        padding: 16px;
-        max-height: 60vh;
-        overflow-y: auto;
-
-        .sensor-list {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-
-          .sensor-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 12px;
-            border: 1px solid rgba(0, 229, 255, 0.3);
-            border-radius: 6px;
-            background: rgba(0, 229, 255, 0.05);
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-
-            &:hover {
-              background: rgba(0, 229, 255, 0.1);
-              border-color: #00e5ff;
-            }
-
-            &.active {
-              background: linear-gradient(135deg, #00e5ff 0%, #0080ff 100%);
-              color: #0a1929;
-              border-color: #00e5ff;
-            }
-
-            &.online {
-              border-left: 3px solid #00e676;
-            }
-
-            &.offline {
-              border-left: 3px solid #78909c;
-              opacity: 0.6;
-            }
-
-            &.warning {
-              border-left: 3px solid #ff4d4f;
-            }
-
-            .sensor-item-code {
-              font-size: 12px;
-              font-weight: 600;
-              flex-shrink: 0;
-            }
-
-            .sensor-item-name {
-              flex: 1;
-              margin: 0 12px;
-              font-size: 11px;
-            }
-
-            .sensor-item-status {
-              font-size: 10px;
-              padding: 2px 6px;
-              border-radius: 4px;
-              flex-shrink: 0;
-
-              &.online {
-                background: rgba(0, 230, 118, 0.2);
-                color: #00e676;
-              }
-
-              &.warning {
-                background: rgba(255, 77, 79, 0.2);
-                color: #ff4d4f;
-              }
-
-              &.offline {
-                background: rgba(120, 144, 156, 0.2);
-                color: #78909c;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   .chart-content {
     flex: 1;
     display: flex;
@@ -724,6 +584,147 @@ onUnmounted(() => {
         width: 100%;
         height: 100%;
         min-height: 150px;
+      }
+    }
+  }
+}
+
+/* 选择传感器模态框样式 - 移到外部 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: auto;
+
+  .modal-content {
+    background: rgba(10, 25, 41, 0.95);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow: hidden;
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+
+      h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #00e5ff;
+        margin: 0;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: rgba(0, 229, 255, 0.6);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #00e5ff;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 16px;
+      max-height: 60vh;
+      overflow-y: auto;
+
+      .sensor-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .sensor-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 8px 12px;
+          border: 1px solid rgba(0, 229, 255, 0.3);
+          border-radius: 6px;
+          background: rgba(0, 229, 255, 0.05);
+          color: #fff;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: #00e5ff;
+          }
+
+          &.active {
+            background: linear-gradient(135deg, #00e5ff 0%, #0080ff 100%);
+            color: #0a1929;
+            border-color: #00e5ff;
+          }
+
+          &.online {
+            border-left: 3px solid #00e676;
+          }
+
+          &.offline {
+            border-left: 3px solid #78909c;
+            opacity: 0.6;
+          }
+
+          &.warning {
+            border-left: 3px solid #ff4d4f;
+          }
+
+          .sensor-item-code {
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+          }
+
+          .sensor-item-name {
+            flex: 1;
+            margin: 0 12px;
+            font-size: 11px;
+          }
+
+          .sensor-item-status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            flex-shrink: 0;
+
+            &.online {
+              background: rgba(0, 230, 118, 0.2);
+              color: #00e676;
+            }
+
+            &.warning {
+              background: rgba(255, 77, 79, 0.2);
+              color: #ff4d4f;
+            }
+
+            &.offline {
+              background: rgba(120, 144, 156, 0.2);
+              color: #78909c;
+            }
+          }
+        }
       }
     }
   }

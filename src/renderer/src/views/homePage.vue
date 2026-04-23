@@ -12,6 +12,12 @@
         </svg>
       </button>
     </div>
+    <MapToolbar 
+      :tools="['point', 'polyline', 'polygon', 'circle']"
+      :compact="false"
+      @draw-complete="handleDrawComplete"
+      @tool-change="handleToolChange"
+    />
   </div>
 </template>
 
@@ -19,11 +25,22 @@
 import { ref } from 'vue';
 import MapView from '../components/MapView.vue'
 import SensorChart from '../components/SensorChart.vue'
+import MapToolbar from '../components/MapToolbar.vue'
 
 const isCollapsed = ref(false);
 
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value;
+};
+
+const handleDrawComplete = (info: any) => {
+  console.log('绘制完成:', info);
+  // 这里可以处理绘制完成后的逻辑
+};
+
+const handleToolChange = (toolId: string | null) => {
+  console.log('工具切换:', toolId);
+  // 这里可以处理工具切换的逻辑
 };
 </script>
 

@@ -31,38 +31,22 @@ export function generateFlowPipes(viewer: any) {
       {
         name: '主管道1',
         color: Cesium.Color.fromCssColorString('#ff4444'),
-        positions: Cesium.Cartesian3.fromDegreesArray([
-          120.30, 36.00,
-          120.34, 36.02,
-          120.38, 36.05
-        ])
+        positions: Cesium.Cartesian3.fromDegreesArray([120.3, 36.0, 120.34, 36.02, 120.38, 36.05])
       },
       {
         name: '主管道2',
         color: Cesium.Color.fromCssColorString('#44ff44'),
-        positions: Cesium.Cartesian3.fromDegreesArray([
-          120.32, 36.02,
-          120.36, 36.04,
-          120.40, 36.07
-        ])
+        positions: Cesium.Cartesian3.fromDegreesArray([120.32, 36.02, 120.36, 36.04, 120.4, 36.07])
       },
       {
         name: '支管道1',
         color: Cesium.Color.fromCssColorString('#ffff44'),
-        positions: Cesium.Cartesian3.fromDegreesArray([
-          120.35, 36.04,
-          120.38, 36.03,
-          120.42, 36.03
-        ])
+        positions: Cesium.Cartesian3.fromDegreesArray([120.35, 36.04, 120.38, 36.03, 120.42, 36.03])
       },
       {
         name: '支管道2',
         color: Cesium.Color.fromCssColorString('#4444ff'),
-        positions: Cesium.Cartesian3.fromDegreesArray([
-          120.37, 36.06,
-          120.41, 36.07,
-          120.45, 36.08
-        ])
+        positions: Cesium.Cartesian3.fromDegreesArray([120.37, 36.06, 120.41, 36.07, 120.45, 36.08])
       }
     ]
 
@@ -82,10 +66,11 @@ export function generateFlowPipes(viewer: any) {
 // 添加单条管线
 function addSinglePipe(viewer: any, pipeData: PipeData) {
   const Cesium = (window as any).Cesium
+  console.log('添加管线', Cesium, viewer)
 
   try {
     // 1. 添加基础管线（半透明背景线）
-    const baseLineEntity = viewer.entities.add({
+    const baseLineEntity = new Cesium.Entity({
       name: pipeData.name + '_base',
       polyline: {
         positions: pipeData.positions,
@@ -94,8 +79,9 @@ function addSinglePipe(viewer: any, pipeData: PipeData) {
         clampToGround: false
       }
     })
+    viewer.entities.add(baseLineEntity)
     pipeEntities.push(baseLineEntity)
-
+    viewer.zoomTo(baseLineEntity)
     // 2. 添加发光主管线
     const glowMaterial = new Cesium.PolylineGlowMaterialProperty({
       glowPower: 0.4,
@@ -140,12 +126,7 @@ function addFlowPoints(viewer: any, pipeData: PipeData) {
         // 计算当前位置（沿路径前进）
         if (positions.length === 2) {
           // 只有两点，简单线性插值
-          return Cesium.Cartesian3.lerp(
-            positions[0],
-            positions[1],
-            t,
-            new Cesium.Cartesian3()
-          )
+          return Cesium.Cartesian3.lerp(positions[0], positions[1], t, new Cesium.Cartesian3())
         } else {
           // 多个点，分段插值
           const segmentCount = positions.length - 1
@@ -254,7 +235,7 @@ function addPipeNodes(viewer: any, pipeData: PipeData) {
 
 // 清除所有管线实体
 function clearPipeEntities(viewer: any) {
-  pipeEntities.forEach(entity => {
+  pipeEntities.forEach((entity) => {
     try {
       if (viewer.entities.contains(entity)) {
         viewer.entities.remove(entity)

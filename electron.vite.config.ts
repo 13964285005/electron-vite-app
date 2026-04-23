@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
+import cesium from 'vite-plugin-cesium'
 
 const projectRoot = resolve(__dirname)
 
@@ -18,6 +19,15 @@ export default defineConfig({
         allow: [projectRoot]
       }
     },
-    plugins: [vue()]
+    plugins: [vue(), cesium()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'cesium': ['cesium']
+          }
+        }
+      }
+    }
   }
 })

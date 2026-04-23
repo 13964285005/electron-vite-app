@@ -245,7 +245,7 @@ const goToWarningPage = () => {
   router.push('/warning')
 }
 
-const goToWarningDetail = (warning: Warning) => {
+const goToWarningDetail = (warning: any) => {
   showNotification.value = false
   router.push({
     path: '/warning',
